@@ -1,71 +1,15 @@
-# 聯邦學習停車推薦與位置隱私保護專案
+This study employs time-distance obfuscation to protect location privacy, dynamically adjusting to secure location data. The recommendation system is based on federated learning technology, which trains learning models on local devices distributed worldwide without needing to upload original data to a central server, thereby reducing the risk of data leakage. The advantage of this technology lies in protecting user privacy while maintaining data integrity and security.
 
-本專案實作基於聯邦學習（Federated Learning）的停車場空位率預測與推薦，並包含位置隱私攻擊模擬分析。
+Utilizing 5G C-V2X (5G Cellular Vehicle-to-Everything) technology, this study has achieved efficient data transmission between devices. This communication technology supports real-time data exchange between vehicles and road-side units (RSUs), providing real-time data support for the parking recommendation system. By analyzing vehicle parking needs and behavior, the system can offer parking recommendations, improving parking efficiency and reducing the time spent searching for parking spaces.
 
-## 專案目的
+To accurately predict the availability of parking spaces in parking lots, this study employs a Recurrent Neural Network (RNN) with Long Short-Term Memory (LSTM) models. The LSTM model, with its memory gate mechanisms, effectively captures long-term dependencies in time series data, showing high predictive accuracy in processing historical parking data. This enables the parking recommendation system to predict the availability of parking spaces based on historical and real-time data and promptly provide parking recommendations to users.
 
-1. 使用多個停車場客戶端進行分散式 LSTM 訓練，避免集中原始數據傳輸。
-2. 比較聯邦平均（FedAvg）與加權聯邦平均（FedWAvg）聚合策略。
-3. 用 `attack.py` 模擬攻擊者重建位置往返真實位置，評估隱私保護能力（重疊率 overlap）。
+The smart parking recommendation system proposed in this research enhances the protection of user data. By processing and learning data locally, there is no need to expose sensitive data to external servers or other devices, thereby protecting user privacy. This approach also effectively reduces data transmission, lowers operational costs, and supports the sustainable development of smart cities. This research has successfully developed a smart parking recommendation system that not only efficiently predicts parking spaces but also protects user privacy through the integration of federated learning and machine learning technologies.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+本研究在位置隱私保護的部分使用了時間距離模糊化位置並且動態調整來實現位置資料的安全。推薦系統則基於聯邦學習(Federated learning)技術，利用分散在各地的本地設備端進行學習模型的訓練，而無須將原始數據上傳至中央伺服器，藉此降低數據洩漏的風險。此技術的優勢在於保護使用者的個人隱私同時維持數據的完整性和安全性。
 
-## 檔案說明
+利用5G C-V2X(5G Cellular Vehicle-to-Everything)技術，本研究實現了高效率的設備間數據傳輸。這種通訊技術支援車輛對車輛、車輛與路邊單元（road side unit, RSU)之間的即時數據交換，為停車推薦系統提供了實時數據支持。通過分析車輛的停車需求和行為，系統能夠停供停車位推薦，提高了停車效率並且減少了尋找停車位的時間。
 
-- `functions.py`
-  - 讀取資料、計算 `vacancy_rate`
-  - 建 `torch.utils.data.Dataset` 與 `DataLoader`
-  - 建立 LSTM 模型與優化器
-  - 指標計算 (MSE, RMSE, MAE, MAPE, R2)
+為了能夠準確預測停車場中的空位率，本研究採用了RNN（循環神經網路,Recurrent Neural Network, RNN）中的LSTM（長短期記憶模型,Long Short-Term Memory, LSTM）模型。LSTM模型利用其記憶門控機制，能夠有效捕捉時間序列數據中的長期依賴關係，並且在處理停車場歷史數據時顯示出極高的預測精確性。這使得停車推薦系統能夠根據歷史和即時數據預測停車位的可用性，並及時向使用者提供停車空位推薦。
 
-- `LSTM.py`
-  - 定義 LSTMModel
-  - 本地訓練函式 `train_model`
-  - 聯邦平均與加權平均聚合函式
-  - 聯邦訓練迴圈 `federated_learning_cycle`
-
-- `fed_avg.py`
-  - FedAvg 版本：簡單平均 local 權重
-
-- `fed_wei.py`
-  - FedWAvg 版本：依每個 Client 資料量加權平均
-
-- `networks.py`
-  - 執行完整訓練/驗證/測試流程
-  - 每 10 個 epoch 寫 log，並記錄最好的模型至測試集評估
-
-- `attack.py`
-  - 位置隱私攻擊模擬：隨機生成真實 vs 推斷位置圓域
-  - 計算幾何重疊率 (intersection/union)
-
-## 執行環境
-
-- Python 3.8+
-- PyTorch
-- pandas
-- numpy
-- scikit-learn
-- shapely
-- tqdm
-
-## 使用步驟
-
-1. 放置資料檔 `occupancy.csv` 與 `inf.csv` 于 `functions.py` 內相同路徑 (可修改 `read_data` 提供的路徑)。
-2. 執行聯邦學習流程：
-   - `python LSTM.py`（或 `python fed_avg.py` / `python fed_wei.py`，如需要簡化版）
-3. 執行測試/實驗結果：
-   - `python networks.py`，結果輸出到 `test29` 檔案。
-4. 執行隱私攻擊評估：
-   - `python attack.py`
-
-## 進階擴充建議
-
-- 加入差分隱私機制 `DP-SGD` 或噪音注入於本地更新。
-- 改為安全聚合（Secure Aggregation）避免服務器見到明文權重。
-- 將 `attack.py` 模型從隨機位置改為根據 LSTM 預測結果做攻擊分析。
-- 擴展客戶端 `ClientSelection`、異質性（non-IID）實驗。
-
-## 結果解讀
-
-- `LSTM.py / fed_avg.py / fed_wei.py` 的訓練 loss 趨近：說明模型學到空位率時間序列。
-- `attack.py` 重疊率越低越安全；若越高表示對手能復原真實位置範圍。
-
----
+本研究所提出的聯邦學習結合的停車推薦系統增強了對使用者數據的保護。透過在本地端進行數據的處理和學習，無需將敏感數據外泄至外部伺服器或其他設備，從而保護了使用者的隱私。該方法還能有效減少數據傳輸量，降低系統運營成本，為智慧城市的可持續發展提供支持。本研究通過結合聯邦學習和機器學習技術，成功開發出既能夠高效預測停車位又能保護使用者隱私的智慧停車推薦系統。
